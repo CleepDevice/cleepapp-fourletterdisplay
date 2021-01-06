@@ -1,0 +1,13 @@
+{
+    "icon": "clock-digital",
+    "global": {
+        "js": ["fourletterdisplay.service.js"],
+        "html": [],
+        "css": []
+    },
+    "config": {
+        "js": ["fourletterdisplay.config.js"],
+        "html": ["fourletterdisplay.config.html"]
+    }
+}
+    

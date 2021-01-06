@@ -1,0 +1,78 @@
+<div layout="column" layout-padding ng-cloak>
+
+    <md-list ng-cloak>
+
+        <md-subheader class="md-no-sticky">General configuration</md-subheader>
+        <md-list-item>
+            <md-icon md-svg-icon="chevron-right"></md-icon>
+            <p>Default brightness</p>
+            <div class="md-secondary">
+                <md-slider
+                    ng-model="fourletterdisplayCtl.config.brightness"
+                    ng-model-options="{debounce: 1000}"
+                    ng-change="fourletterdisplayCtl.setBrightness()"
+                    min="0"
+                    max="15"
+                    aria-label="Default brightness"
+                    md-discrete
+                >
+                </md-slider>
+            </div>
+        </md-list-item>
+
+        <md-subheader class="md-no-sticky">Night mode</md-subheader>
+        <md-list-item class="md-2-line">
+            <md-icon md-svg-icon="chevron-right"></md-icon>
+            <div class="md-list-item-text">
+                <h3>Disable/enable night mode</h3>
+                <p>Night mode will change brightness at sunset and restore default one at sunrise</p>
+            </div>
+            <md-checkbox
+                class="md-secondary"
+                ng-model="fourletterdisplayCtl.config.nightmode"
+                ng-change="fourletterdisplayCtl.enableNightMode()"
+                aria-label="Night mode"
+            ></md-checkbox>
+        </md-list-item>
+        <md-list-item>
+            <md-icon md-svg-icon="chevron-right"></md-icon>
+            <p>Night brightness</p>
+            <div class="md-secondary">
+                <md-slider
+                    ng-model="fourletterdisplayCtl.config.nightbrightness"
+                    ng-model-options="{debounce: 1000}"
+                    ng-change="fourletterdisplayCtl.setNightModeBrightness()"
+                    min="0"
+                    max="15"
+                    aria-label="Night brightness"
+                    md-discrete
+                >
+                </md-slider>
+            </div>
+        </md-list-item>
+
+        <md-subheader class="md-no-sticky">Test</md-subheader>
+        <md-list-item>
+            <md-icon md-svg-icon="chevron-right"></md-icon>
+            <p>Display message</p>
+            <md-input-container md-no-float class="md-secondary no-margin" layout="row" layout-align="start center" layout-padding>
+                <div class="no-md-error">
+                    <input ng-model="fourletterdisplayCtl.message" placeholder="message" aria-label="Message" class="no-margin">
+                </div>
+                <md-button ng-click="fourletterdisplayCtl.displayMessage()" class="md-raised md-primary">
+                    <md-icon md-svg-icon="pencil"></md-icon>
+                </md-button>
+            </md-input-container>
+        </md-list-item>
+        <md-list-item>
+            <md-icon md-svg-icon="chevron-right"></md-icon>
+            <p>Clear display</p>
+            <md-button class="md-secondary md-raised md-primary" ng-click="fourletterdisplayCtl.clear()">
+                Clear
+            </md-button>
+        </md-list-item>
+
+    </md-list>
+
+</div>
+    
