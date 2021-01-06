@@ -14,7 +14,7 @@ Solder the 40-pin header and the 2 digits on the board then plug it into your ra
 
 Once app installed hardware is ready to use.
 
-You can:
+With configuration page you can:
 * configure default digit brightness
 * enable night mode to reduce brightness after sunset.
 * send text to test the display
