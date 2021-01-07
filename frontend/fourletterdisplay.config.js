@@ -12,6 +12,7 @@ function($rootScope, cleepService, fourletterdisplayService) {
         var self = this;
         self.config = {};
         self.message = '';
+        self.dots = [false, false, false, false];
 
         /**
          * Display message
@@ -21,7 +22,14 @@ function($rootScope, cleepService, fourletterdisplayService) {
         };
 
         /**
-         * Eanble night mode
+         * Set dots
+         */
+        self.setDots = function() {
+            fourletterdisplayService.setDots(self.dots[0], self.dots[1], self.dots[2], self.dots[3]);
+        };
+
+        /**
+         * Enable night mode
          */
         self.enableNightMode = function() {
             fourletterdisplayService.enableNightMode(self.config.nightmode)

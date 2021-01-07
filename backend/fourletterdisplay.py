@@ -6,6 +6,7 @@ from cleep.core import CleepRenderer
 from cleep.common import CATEGORIES
 from cleep.profiles.displayMessageProfile import DisplayMessageProfile
 from .fourLetterPHatDriver import FourLetterPHatDriver
+import importlib
 
 class Fourletterdisplay(CleepRenderer):
     """
@@ -91,15 +92,32 @@ class Fourletterdisplay(CleepRenderer):
             self.logger.info('Disable night mode (restore brightness to %s/15)' % brightness)
             self.set_brightness(brightness)
 
-    def on_render(self, profile):
+    def on_render(self, profile, params):
         """
         Render profile
 
         Args:
-            profile (Profile): Profile instance
+            profile (string): profile rendered
+            params (dict): profile parameters
         """
-        if isinstance(profile, DisplayMessageProfile):
-            self.display_message(profile.message)
+        if profile == 'DisplayMessageProfile':
+            self.display_message(params['message'])
+            self.set_dots(middle_left=True)
+
+    def __import_lib(self):
+        """
+        Import hat lib
+
+        Raises:
+            Exception if driver not installed or lib not installed or screen not connected
+        """
+        if not self.driver.is_installed():
+            raise Exception('Four-letter pHAT driver is not installed')
+        try:
+            global fourletterphat
+            fourletterphat = importlib.import_module('fourletterphat')
+        except:
+            raise Exception('Four-letter pHAT does not seem connected. Please check hardware')
 
     def enable_night_mode(self, enable):
         """
@@ -140,12 +158,7 @@ class Fourletterdisplay(CleepRenderer):
         """
         Clear display
         """
-        if not self.driver.is_installed():
-            raise Exception('Four-letter pHAT driver is not installed')
-        try:
-            import fourletterphat
-        except:
-            raise Exception('Four-letter pHAT does not seem connected. Please check hardware')
+        self.__import_lib()
         fourletterphat.clear()
         fourletterphat.show()
 
@@ -160,13 +173,7 @@ class Fourletterdisplay(CleepRenderer):
             {'name': 'message', 'value': message, 'type': str}
         ])
 
-        # update hat
-        if not self.driver.is_installed():
-            raise Exception('Four-letter pHAT driver is not installed')
-        try:
-            import fourletterphat
-        except:
-            raise Exception('Four-letter pHAT does not seem connected. Please check hardware')
+        self.__import_lib()
         fourletterphat.scroll_print(message)
 
     def set_brightness(self, brightness):
@@ -189,12 +196,18 @@ class Fourletterdisplay(CleepRenderer):
         # save value
         self._set_config_field('brightness', brightness)
 
-        # update hat
-        if not self.driver.is_installed():
-            raise Exception('Four-letter pHAT driver is not installed')
-        try:
-            import fourletterphat
-        except:
-            raise Exception('Four-letter pHAT does not seem connected. Please check hardware')
+        self.__import_lib()
         fourletterphat.set_brightness(brightness)
+
+    def set_dots(self, most_left=False, middle_left=False, middle_right=False, most_right=False):
+        """
+        Turn on/off specified dots
+        """
+        self.__import_lib()
+        fourletterphat.set_decimal(0, most_left)
+        fourletterphat.set_decimal(1, middle_left)
+        fourletterphat.set_decimal(2, middle_right)
+        fourletterphat.set_decimal(3, most_right)
+        fourletterphat.show()
+        
     

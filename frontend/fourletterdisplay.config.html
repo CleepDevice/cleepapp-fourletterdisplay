@@ -66,6 +66,21 @@
         </md-list-item>
         <md-list-item>
             <md-icon md-svg-icon="chevron-right"></md-icon>
+            <p>Turn on/off dots</p>
+            <md-input-container md-no-float class="md-secondary no-margin" layout="row" layout-align="start center" layout-padding>
+                <div>
+                    <md-checkbox ng-model="fourletterdisplayCtl.dots[0]"></md-checkbox>
+                    <md-checkbox ng-model="fourletterdisplayCtl.dots[1]"></md-checkbox>
+                    <md-checkbox ng-model="fourletterdisplayCtl.dots[2]"></md-checkbox>
+                    <md-checkbox ng-model="fourletterdisplayCtl.dots[3]"></md-checkbox>
+                </div>
+                <md-button ng-click="fourletterdisplayCtl.setDots()" class="md-raised md-primary">
+                    <md-icon md-svg-icon="pencil"></md-icon>
+                </md-button>
+            </md-input-container>
+        </md-list-item>
+        <md-list-item>
+            <md-icon md-svg-icon="chevron-right"></md-icon>
             <p>Clear display</p>
             <md-button class="md-secondary md-raised md-primary" ng-click="fourletterdisplayCtl.clear()">
                 Clear

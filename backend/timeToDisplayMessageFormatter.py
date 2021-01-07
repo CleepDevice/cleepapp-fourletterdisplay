@@ -4,7 +4,7 @@
 from cleep.libs.internals.profileformatter import ProfileFormatter
 from cleep.profiles.displayMessageProfile import DisplayMessageProfile
 
-class TimeToDisplayMessageProfileFormatter(ProfileFormatter):
+class TimeToDisplayMessageFormatter(ProfileFormatter):
     """
     parameters.time.now event to display message profile formatter
     """
@@ -22,4 +22,6 @@ class TimeToDisplayMessageProfileFormatter(ProfileFormatter):
         Fill profile with event values
         """
         profile.message = '%02d%02d' % (event_values['hour'], event_values['minute'])
+
+        return profile
 

@@ -38,6 +38,18 @@ function($rootScope, rpcService) {
     };
 
     /**
+     * Set dots
+     */
+    self.setDots = function(mostLeft, middleLeft, middleRight, mostRight) {
+        return rpcService.sendCommand('set_dots', 'fourletterdisplay', {
+            'most_left': mostLeft,
+            'middle_left': middleLeft,
+            'middle_right': middleRight,
+            'most_right': mostRight,
+        });
+    };
+
+    /**
      * Enable night mode
      */
     self.enableNightMode = function(enable) {
