@@ -18,10 +18,12 @@ class Fourletterdisplay(CleepRenderer):
     MODULE_VERSION = '1.0.0'
     MODULE_DEPS = []
     MODULE_DESCRIPTION = 'Four-letter pHAT display'
-    MODULE_LONGDESCRIPTION = 'This application installs all needed to use Four-letter pHAT from Piromoni.<br>\
-                             It allows to display informations from your device (like weather temperature, CPU usage and more) \
-                             through four letters.<br>\
-                             Long text (more than 4 letters) will scroll automatically.'
+    MODULE_LONGDESCRIPTION = ('This application installs all needed to use Four-letter pHAT from Piromoni.<br>'
+                             'It allows to display informations from your device (like weather temperature, CPU usage and more) '
+                             'through four letters.<br>'
+                             'Long text (more than 4 letters) will scroll automatically and displayed dots can be '
+                             'configured individually.<br>'
+                             'Brightness is also configurable with a night mode with a night mode')
     MODULE_TAGS = ['display', 'pimoroni', 'digits', 'segments']
     MODULE_CATEGORY = CATEGORIES.DRIVER
     MODULE_COUNTRY = None
