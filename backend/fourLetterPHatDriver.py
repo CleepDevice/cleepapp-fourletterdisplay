@@ -6,6 +6,9 @@ from cleep.libs.configs.configtxt import ConfigTxt
 from cleep.libs.configs.etcmodules import EtcModules
 
 class FourLetterPHatDriver(Driver):
+    """
+    Pimoroni Four-letter pHat driver for Cleep
+    """
 
     DRIVER_NAME = 'Pimoroni Four-letter pHat'
     MODULE_I2C_DEV = 'i2c-dev'
@@ -30,7 +33,7 @@ class FourLetterPHatDriver(Driver):
         self.config_txt.enable_i2c()
         self.etc_modules.enable_module(FourLetterPHatDriver.MODULE_I2C_DEV)
 
-    def _uninstall(self, params):
+    def _uninstall(self, params=None):
         """
         Uninstall driver
         """
