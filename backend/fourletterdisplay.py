@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from cleep.exception import MissingParameter, InvalidParameter, CommandError
+import importlib
 from cleep.core import CleepRenderer
 from cleep.common import CATEGORIES
 from cleep.profiles.displayMessageProfile import DisplayMessageProfile
 from .fourLetterPHatDriver import FourLetterPHatDriver
-import importlib
+
+# use for global lib import
+FOUR_LETTER_PHAT = None
 
 class Fourletterdisplay(CleepRenderer):
     """
@@ -61,7 +63,7 @@ class Fourletterdisplay(CleepRenderer):
         # set configured brightness
         try:
             self.set_brightness(self._get_config_field('brightness'))
-        except:
+        except Exception:
             # drop exception when hat is not configured
             pass
 
@@ -71,7 +73,7 @@ class Fourletterdisplay(CleepRenderer):
         """
         try:
             self.clear()
-        except:
+        except Exception:
             # drop exception when hat is not configured
             pass
 
@@ -114,10 +116,10 @@ class Fourletterdisplay(CleepRenderer):
         if not self.driver.is_installed():
             raise Exception('Four-letter pHAT driver is not installed')
         try:
-            global fourletterphat
-            fourletterphat = importlib.import_module('fourletterphat')
-        except:
-            raise Exception('Four-letter pHAT does not seem connected. Please check hardware')
+            global FOUR_LETTER_PHAT
+            FOUR_LETTER_PHAT = importlib.import_module('fourletterphat')
+        except Exception as error:
+            raise Exception('Four-letter pHAT does not seem connected. Please check hardware') from error
 
     def enable_night_mode(self, enable):
         """
@@ -159,13 +161,13 @@ class Fourletterdisplay(CleepRenderer):
         Clear display
         """
         self.__import_lib()
-        fourletterphat.clear()
-        fourletterphat.show()
+        FOUR_LETTER_PHAT.clear()
+        FOUR_LETTER_PHAT.show()
 
     def display_message(self, message):
         """
         Display specified message
-        
+
         Args:
             message (string): message to display
         """
@@ -174,7 +176,7 @@ class Fourletterdisplay(CleepRenderer):
         ])
 
         self.__import_lib()
-        fourletterphat.scroll_print(message)
+        FOUR_LETTER_PHAT.scroll_print(message)
 
     def set_brightness(self, brightness):
         """
@@ -197,17 +199,16 @@ class Fourletterdisplay(CleepRenderer):
         self._set_config_field('brightness', brightness)
 
         self.__import_lib()
-        fourletterphat.set_brightness(brightness)
+        FOUR_LETTER_PHAT.set_brightness(brightness)
 
     def set_dots(self, most_left=False, middle_left=False, middle_right=False, most_right=False):
         """
         Turn on/off specified dots
         """
         self.__import_lib()
-        fourletterphat.set_decimal(0, most_left)
-        fourletterphat.set_decimal(1, middle_left)
-        fourletterphat.set_decimal(2, middle_right)
-        fourletterphat.set_decimal(3, most_right)
-        fourletterphat.show()
-        
-    
+        FOUR_LETTER_PHAT.set_decimal(0, most_left)
+        FOUR_LETTER_PHAT.set_decimal(1, middle_left)
+        FOUR_LETTER_PHAT.set_decimal(2, middle_right)
+        FOUR_LETTER_PHAT.set_decimal(3, most_right)
+        FOUR_LETTER_PHAT.show()
+
