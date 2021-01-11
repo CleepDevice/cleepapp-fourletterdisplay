@@ -57,6 +57,7 @@ class Fourletterdisplay(CleepRenderer):
             'cleep_filesystem': bootstrap['cleep_filesystem'],
         })
         self._register_driver(self.driver)
+        self.is_night_mode = False
 
     def _configure(self):
         """
@@ -84,17 +85,28 @@ class Fourletterdisplay(CleepRenderer):
         Event received
 
         Params:
-            event (MessageRequest): event data
+            event (dict): MessageRequest as dict with event values::
+
+                {
+                    event (string): event name
+                    params (dict): event parameters
+                    device_id (string): device that emits event or None
+                    sender (string): event sender
+                    startup (bool): startup event flag
+                }
+
         """
         if event['event'].endswith('time.sunrise') and self._get_config_field('nightmode'):
             brightness = self._get_config_field('brightness')
             self.logger.info('Enable night mode (set brightness to %s/15)' % brightness)
             self.set_brightness(brightness)
+            self.is_night_mode = True
 
         if event['event'].endswith('time.sunset') and self._get_config_field('nightmode'):
             brightness = self._get_config_field('nightbrightness')
             self.logger.info('Disable night mode (restore brightness to %s/15)' % brightness)
             self.set_brightness(brightness)
+            self.is_night_mode = False
 
     def on_render(self, profile, params):
         """
@@ -117,6 +129,7 @@ class Fourletterdisplay(CleepRenderer):
         """
         if not self.driver.is_installed():
             raise Exception('Four-letter pHAT driver is not installed')
+
         try:
             global FOUR_LETTER_PHAT
             FOUR_LETTER_PHAT = importlib.import_module('fourletterphat')
@@ -136,8 +149,10 @@ class Fourletterdisplay(CleepRenderer):
 
         self._set_config_field('nightmode', enable)
 
-        if not enable:
-            # restore configured brightness
+        # restore configured brightness
+        if enable and self.is_night_mode:
+            self.set_brightness(self._get_config_field('nightbrightness'))
+        else:
             self.set_brightness(self._get_config_field('brightness'))
 
     def set_night_mode_brightness(self, brightness):
@@ -157,6 +172,10 @@ class Fourletterdisplay(CleepRenderer):
         ])
 
         self._set_config_field('nightbrightness', brightness)
+
+        if self.is_night_mode:
+            self.__import_lib()
+            FOUR_LETTER_PHAT.set_brightness(brightness)
 
     def clear(self):
         """
@@ -200,8 +219,9 @@ class Fourletterdisplay(CleepRenderer):
         # save value
         self._set_config_field('brightness', brightness)
 
-        self.__import_lib()
-        FOUR_LETTER_PHAT.set_brightness(brightness)
+        if not self.is_night_mode:
+            self.__import_lib()
+            FOUR_LETTER_PHAT.set_brightness(brightness)
 
     def set_dots(self, most_left=False, middle_left=False, middle_right=False, most_right=False):
         """
