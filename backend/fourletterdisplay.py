@@ -98,13 +98,13 @@ class Fourletterdisplay(CleepRenderer):
         """
         if event['event'].endswith('time.sunrise') and self._get_config_field('nightmode'):
             brightness = self._get_config_field('brightness')
-            self.logger.info('Enable night mode (set brightness to %s/15)' % brightness)
+            self.logger.info('Disable night mode (set brightness to %s/15)' % brightness)
             self.set_brightness(brightness)
             self.is_night_mode = True
 
         if event['event'].endswith('time.sunset') and self._get_config_field('nightmode'):
             brightness = self._get_config_field('nightbrightness')
-            self.logger.info('Disable night mode (restore brightness to %s/15)' % brightness)
+            self.logger.info('Enable night mode (restore brightness to %s/15)' % brightness)
             self.set_brightness(brightness)
             self.is_night_mode = False
 

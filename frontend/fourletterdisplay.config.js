@@ -1,7 +1,6 @@
 /**
  * Fourletterdisplay config component
  * Handle fourletterdisplay application configuration
- * If your application doesn't need configuration page, delete this file and its references into desc.json
  */
 angular
 .module('Cleep')
