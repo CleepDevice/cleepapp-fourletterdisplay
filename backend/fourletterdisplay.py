@@ -15,7 +15,7 @@ class Fourletterdisplay(CleepRenderer):
     Fourletterdisplay application
     """
     MODULE_AUTHOR = 'Cleep'
-    MODULE_VERSION = '1.0.0'
+    MODULE_VERSION = '1.0.1'
     MODULE_DEPS = []
     MODULE_DESCRIPTION = 'Four-letter pHAT display'
     MODULE_LONGDESCRIPTION = ('This application installs all needed to use Four-letter pHAT from Piromoni.<br>'
@@ -99,13 +99,13 @@ class Fourletterdisplay(CleepRenderer):
         if event['event'].endswith('time.sunrise') and self._get_config_field('nightmode'):
             brightness = self._get_config_field('brightness')
             self.logger.info('Disable night mode (set brightness to %s/15)' % brightness)
-            self.set_brightness(brightness)
+            self.change_brightness(brightness)
             self.is_night_mode = True
 
         if event['event'].endswith('time.sunset') and self._get_config_field('nightmode'):
             brightness = self._get_config_field('nightbrightness')
             self.logger.info('Enable night mode (restore brightness to %s/15)' % brightness)
-            self.set_brightness(brightness)
+            self.change_brightness(brightness)
             self.is_night_mode = False
 
     def on_render(self, profile, params):
@@ -173,9 +173,9 @@ class Fourletterdisplay(CleepRenderer):
 
         self._set_config_field('nightbrightness', brightness)
 
+        # change brightness
         if self.is_night_mode:
-            self.__import_lib()
-            FOUR_LETTER_PHAT.set_brightness(brightness)
+            self.change_brightness(brightness)
 
     def clear(self):
         """
@@ -219,9 +219,16 @@ class Fourletterdisplay(CleepRenderer):
         # save value
         self._set_config_field('brightness', brightness)
 
+        # change brightness
         if not self.is_night_mode:
-            self.__import_lib()
-            FOUR_LETTER_PHAT.set_brightness(brightness)
+            self.change_brightness(brightness)
+
+    def change_brightness(self, brightness):
+        """
+        Change brightness
+        """
+        self.__import_lib()
+        FOUR_LETTER_PHAT.set_brightness(brightness)
 
     def set_dots(self, most_left=False, middle_left=False, middle_right=False, most_right=False):
         """

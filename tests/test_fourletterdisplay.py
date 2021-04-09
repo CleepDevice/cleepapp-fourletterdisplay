@@ -79,52 +79,52 @@ class TestsFourletterdisplay(unittest.TestCase):
         nightmode = True
         brightness = 10
         self.module._get_config_field = Mock(side_effect=[nightmode, brightness])
-        self.module.set_brightness = Mock()
+        self.module.change_brightness = Mock()
 
         self.module.on_event({
             'event': 'test.time.sunrise',
         })
 
-        self.module.set_brightness.assert_called_with(brightness)
+        self.module.change_brightness.assert_called_with(brightness)
 
     def test_on_event_sunrise_nightmode_disabled(self):
         self.init_session()
         nightmode = False
         brightness = 10
         self.module._get_config_field = Mock(side_effect=[nightmode, brightness])
-        self.module.set_brightness = Mock()
+        self.module.change_brightness = Mock()
 
         self.module.on_event({
             'event': 'test.time.sunrise',
         })
 
-        self.assertFalse(self.module.set_brightness.called)
+        self.assertFalse(self.module.change_brightness.called)
 
     def test_on_event_sunset_nightmode_enabled(self):
         self.init_session()
         nightmode = True
         nightbrightness = 0
         self.module._get_config_field = Mock(side_effect=[nightmode, nightbrightness])
-        self.module.set_brightness = Mock()
+        self.module.change_brightness = Mock()
 
         self.module.on_event({
             'event': 'test.time.sunset',
         })
 
-        self.module.set_brightness.assert_called_with(nightbrightness)
+        self.module.change_brightness.assert_called_with(nightbrightness)
 
     def test_on_event_sunset_nightmode_disabled(self):
         self.init_session()
         nightmode = False
         nightbrightness = 10
         self.module._get_config_field = Mock(side_effect=[nightmode, nightbrightness])
-        self.module.set_brightness = Mock()
+        self.module.change_brightness = Mock()
 
         self.module.on_event({
             'event': 'test.time.sunset',
         })
 
-        self.assertFalse(self.module.set_brightness.called)
+        self.assertFalse(self.module.change_brightness.called)
 
     def test_on_render(self):
         self.init_session()
