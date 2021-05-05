@@ -15,7 +15,7 @@ class Fourletterdisplay(CleepRenderer):
     Fourletterdisplay application
     """
     MODULE_AUTHOR = 'Cleep'
-    MODULE_VERSION = '1.0.1'
+    MODULE_VERSION = '1.0.2'
     MODULE_DEPS = []
     MODULE_DESCRIPTION = 'Four-letter pHAT display'
     MODULE_LONGDESCRIPTION = ('This application installs all needed to use Four-letter pHAT from Piromoni.<br>'
