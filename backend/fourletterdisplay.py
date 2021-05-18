@@ -4,7 +4,7 @@
 import importlib
 from cleep.core import CleepRenderer
 from cleep.common import CATEGORIES
-from cleep.profiles.displayMessageProfile import DisplayMessageProfile
+from cleep.profiles.messageprofile import MessageProfile
 from .fourLetterPHatDriver import FourLetterPHatDriver
 
 # use for global lib import
@@ -39,7 +39,7 @@ class Fourletterdisplay(CleepRenderer):
         'nightbrightness': 4,
     }
 
-    RENDERER_PROFILES = [DisplayMessageProfile]
+    RENDERER_PROFILES = [MessageProfile]
     RENDERER_TYPE = 'display'
 
     def __init__(self, bootstrap, debug_enabled):
@@ -116,7 +116,7 @@ class Fourletterdisplay(CleepRenderer):
             profile (string): profile rendered
             params (dict): profile parameters
         """
-        if profile == 'DisplayMessageProfile':
+        if profile == 'MessageProfile':
             self.display_message(params['message'])
             self.set_dots(middle_left=True)
 
