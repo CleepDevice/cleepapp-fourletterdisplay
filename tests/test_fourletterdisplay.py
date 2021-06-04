@@ -132,7 +132,7 @@ class TestsFourletterdisplay(unittest.TestCase):
         self.module.set_dots = Mock()
         message = 'Hello'
 
-        self.module.on_render('DisplayMessageProfile', {'message': message})
+        self.module.on_render('MessageProfile', {'message': message})
 
         self.module.display_message.assert_called_with(message)
         self.module.set_dots.assert_called_with(middle_left=True)
@@ -242,7 +242,7 @@ class TestsFourletterdisplay(unittest.TestCase):
 
         with self.assertRaises(InvalidParameter) as cm:
             self.module.enable_night_mode('test')
-        self.assertEqual(str(cm.exception), 'Parameter "enable" is invalid (specified="test")')
+        self.assertEqual(str(cm.exception), 'Parameter "enable" must be of type "bool"')
 
     def test_set_night_mode_brightness_during_day(self):
         self.init_session()
@@ -273,7 +273,7 @@ class TestsFourletterdisplay(unittest.TestCase):
 
         with self.assertRaises(InvalidParameter) as cm:
             self.module.set_night_mode_brightness('helo')
-        self.assertEqual(str(cm.exception), 'Parameter "brightness" must be between 0..15')
+        self.assertEqual(str(cm.exception), 'Parameter "brightness" must be of type "int"')
 
         with self.assertRaises(InvalidParameter) as cm:
             self.module.set_night_mode_brightness(20)
@@ -323,7 +323,7 @@ class TestsFourletterdisplay(unittest.TestCase):
 
         with self.assertRaises(InvalidParameter) as cm:
             self.module.set_brightness('helo')
-        self.assertEqual(str(cm.exception), 'Parameter "brightness" must be between 0..15')
+        self.assertEqual(str(cm.exception), 'Parameter "brightness" must be of type "int"')
 
         with self.assertRaises(InvalidParameter) as cm:
             self.module.set_brightness(20)
@@ -356,9 +356,9 @@ class TestsFourLetterPHatDriver(unittest.TestCase):
 
     def init_session(self):
         self.fs = Mock()
-        self.driver = FourLetterPHatDriver({
-            'cleep_filesystem': self.fs
-        })
+        self.driver = FourLetterPHatDriver()
+        self.driver.cleep_filesystem = Mock()
+        self.driver._on_registered()
 
     @patch('backend.fourLetterPHatDriver.ConfigTxt')
     @patch('backend.fourLetterPHatDriver.EtcModules')

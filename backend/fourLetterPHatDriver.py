@@ -13,15 +13,16 @@ class FourLetterPHatDriver(Driver):
     DRIVER_NAME = 'Pimoroni Four-letter pHat'
     MODULE_I2C_DEV = 'i2c-dev'
 
-    def __init__(self, params):
+    def __init__(self):
         """
         Constructor
-
-        Args:
-            params (dict): driver parameters
         """
-        Driver.__init__(self, params, Driver.DRIVER_DISPLAY, FourLetterPHatDriver.DRIVER_NAME)
+        Driver.__init__(self, Driver.DRIVER_DISPLAY, FourLetterPHatDriver.DRIVER_NAME)
 
+    def _on_registered(self):
+        """
+        Driver is registered
+        """
         # members
         self.config_txt = ConfigTxt(self.cleep_filesystem)
         self.etc_modules = EtcModules(self.cleep_filesystem)

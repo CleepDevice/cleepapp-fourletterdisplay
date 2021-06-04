@@ -4,7 +4,7 @@
 from cleep.libs.internals.profileformatter import ProfileFormatter
 from cleep.profiles.messageprofile import MessageProfile
 
-class TimeToMessageProfileFormatter(ProfileFormatter):
+class TimeToMessageFormatter(ProfileFormatter):
     """
     parameters.time.now event to message profile formatter
     """

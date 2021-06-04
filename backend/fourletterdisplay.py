@@ -15,7 +15,7 @@ class Fourletterdisplay(CleepRenderer):
     Fourletterdisplay application
     """
     MODULE_AUTHOR = 'Cleep'
-    MODULE_VERSION = '1.0.2'
+    MODULE_VERSION = '1.0.3'
     MODULE_DEPS = []
     MODULE_DESCRIPTION = 'Four-letter pHAT display'
     MODULE_LONGDESCRIPTION = ('This application installs all needed to use Four-letter pHAT from Piromoni.<br>'
@@ -53,9 +53,7 @@ class Fourletterdisplay(CleepRenderer):
         CleepRenderer.__init__(self, bootstrap, debug_enabled)
 
         # members
-        self.driver = FourLetterPHatDriver({
-            'cleep_filesystem': bootstrap['cleep_filesystem'],
-        })
+        self.driver = FourLetterPHatDriver()
         self._register_driver(self.driver)
         self.is_night_mode = False
 

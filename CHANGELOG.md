@@ -1,8 +1,9 @@
 # Changelog
 
-## v1.0.3 - 2021-05-18 UNRELEASED
+## v1.0.3 - 2021-06-04
 
 * Backend: update formatters after core changes
+* Backend: update driver after core changes
 
 ## v1.0.2 - 2021-05-05
 
