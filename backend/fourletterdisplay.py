@@ -106,16 +106,16 @@ class Fourletterdisplay(CleepRenderer):
             self.change_brightness(brightness)
             self.is_night_mode = False
 
-    def on_render(self, profile, params):
+    def on_render(self, profile_name, profile_values):
         """
         Render profile
 
         Args:
-            profile (string): profile rendered
-            params (dict): profile parameters
+            profile_name (string): rendered profile name
+            values (dict): profile values
         """
-        if profile == 'MessageProfile':
-            self.display_message(params['message'])
+        if profile_name == 'MessageProfile':
+            self.display_message(values['message'])
             self.set_dots(middle_left=True)
 
     def __import_lib(self):

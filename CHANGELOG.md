@@ -1,20 +1,24 @@
 # Changelog
 
-## v1.0.3 - 2021-06-04
+## [UNRELEASED]
+### Changed
+* Update on_render parameter names according to core
 
-* Backend: update formatters after core changes
-* Backend: update driver after core changes
+## [1.0.3] - 2021-06-04
+### Changed
+* Update formatters after core changes
+* Update driver after core changes
 
-## v1.0.2 - 2021-05-05
+## [1.0.2] - 2021-05-05
+### Fixed
+* Fix frontend layout
 
-* Frontend: fix layout
+## [1.0.1] - 2021-04-09
+### Fixed
+* Brightness is stored during sunset/sunrise event
 
-## v1.0.1 - 2021-04-09
-
-* Fix: brightness is stored during sunset/sunrise event
-
-## v1.0.0 - 2021-01-19
-
+## [1.0.0] - 2021-01-19
+### Changed
 * First release
 
 
