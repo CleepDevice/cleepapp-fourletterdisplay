@@ -1,4 +1,4 @@
-# cleepmod-fourletterdisplay [![Coverage Status](https://coveralls.io/repos/github/tangb/cleepmod-fourletterdisplay/badge.svg?branch=main)](https://coveralls.io/github/tangb/cleepmod-fourletterdisplay?branch=main)
+# cleepmod-fourletterdisplay [![Coverage Status](https://coveralls.io/repos/github/tangb/cleepapp-fourletterdisplay/badge.svg?branch=main)](https://coveralls.io/github/tangb/cleepmod-fourletterdisplay?branch=main)
 
 Four-letter pHAT Cleep driver for [Piromoni hardware](https://shop.pimoroni.com/products/four-letter-phat).
 
