@@ -14,11 +14,11 @@
 * Fix frontend layout
 
 ## [1.0.1] - 2021-04-09
-### Fixed
+### Fixed
 * Brightness is stored during sunset/sunrise event
 
 ## [1.0.0] - 2021-01-19
-### Changed
+### Changed
 * First release
 
 
