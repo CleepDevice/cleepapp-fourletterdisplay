@@ -4,6 +4,9 @@
 ### Changed
 * Update on_render parameter names according to core
 
+### Fixed
+* Restore last brightness after restart (#1388)
+
 ## [1.0.3] - 2021-06-04
 ### Changed
 * Update formatters after core changes

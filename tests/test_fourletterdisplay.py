@@ -41,10 +41,12 @@ class TestsFourletterdisplay(unittest.TestCase):
     def test_configure(self):
         self.init_session(False)
         self.module.set_brightness = Mock()
+        self.module._get_config_field = Mock(return_value=10)
 
         self.session.start_module(self.module)
 
-        self.module.set_brightness.assert_called_with(15)
+        self.module.set_brightness.assert_called_with(10)
+        self.module._get_config_field.assert_called_with('currentbrightness')
 
     def test_configure_exception(self):
         self.init_session(False)
@@ -261,7 +263,8 @@ class TestsFourletterdisplay(unittest.TestCase):
 
         self.module.set_night_mode_brightness(2)
 
-        self.module._set_config_field.assert_called_with('nightbrightness', 2)
+        self.module._set_config_field.assert_any_call('nightbrightness', 2)
+        self.module._set_config_field.assert_any_call('currentbrightness', 2)
         mock_lib.set_brightness.assert_called_with(2)
 
     def test_set_night_mode_brightness_invalid_params(self):
@@ -301,7 +304,8 @@ class TestsFourletterdisplay(unittest.TestCase):
 
         self.module.set_brightness(12)
 
-        self.module._set_config_field.assert_called_with('brightness', 12)
+        self.module._set_config_field.assert_any_call('brightness', 12)
+        self.module._set_config_field.assert_any_call('currentbrightness', 12)
         mock_lib.set_brightness.assert_called_with(12)
 
     def test_set_brightness_during_night(self):

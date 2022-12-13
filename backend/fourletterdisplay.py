@@ -34,6 +34,7 @@ class Fourletterdisplay(CleepRenderer):
 
     MODULE_CONFIG_FILE = 'fourletterpdisplay.conf'
     DEFAULT_CONFIG = {
+        'currentbrightness': 15,
         'brightness': 15,
         'nightmode': False,
         'nightbrightness': 4,
@@ -63,7 +64,7 @@ class Fourletterdisplay(CleepRenderer):
         """
         # set configured brightness
         try:
-            self.set_brightness(self._get_config_field('brightness'))
+            self.set_brightness(self._get_config_field('currentbrightness'))
         except Exception:
             # drop exception when hat is not configured
             pass
@@ -111,11 +112,11 @@ class Fourletterdisplay(CleepRenderer):
         Render profile
 
         Args:
-            profile_name (string): rendered profile name
+            profile_name (str): rendered profile name
             values (dict): profile values
         """
         if profile_name == 'MessageProfile':
-            self.display_message(values['message'])
+            self.display_message(profile_values['message'])
             self.set_dots(middle_left=True)
 
     def __import_lib(self):
@@ -227,6 +228,9 @@ class Fourletterdisplay(CleepRenderer):
         """
         self.__import_lib()
         FOUR_LETTER_PHAT.set_brightness(brightness)
+
+        # store current brightness to be able to restore it after restart
+        self._set_config_field('currentbrightness', brightness)
 
     def set_dots(self, most_left=False, middle_left=False, middle_right=False, most_right=False):
         """
