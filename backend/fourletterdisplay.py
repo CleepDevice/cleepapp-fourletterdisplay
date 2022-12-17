@@ -2,9 +2,11 @@
 # -*- coding: utf-8 -*-
 
 import importlib
+import sys
 from cleep.core import CleepRenderer
 from cleep.common import CATEGORIES
 from cleep.profiles.messageprofile import MessageProfile
+from cleep.profiles.alarmprofile import AlarmProfile
 from .fourLetterPHatDriver import FourLetterPHatDriver
 
 # use for global lib import
@@ -40,7 +42,7 @@ class Fourletterdisplay(CleepRenderer):
         'nightbrightness': 4,
     }
 
-    RENDERER_PROFILES = [MessageProfile]
+    RENDERER_PROFILES = [MessageProfile, AlarmProfile]
     RENDERER_TYPE = 'display'
 
     def __init__(self, bootstrap, debug_enabled):
@@ -57,10 +59,11 @@ class Fourletterdisplay(CleepRenderer):
         self.driver = FourLetterPHatDriver()
         self._register_driver(self.driver)
         self.is_night_mode = False
+        self.__enabled_dots = [False, False, False, False]
 
-    def _configure(self):
+    def _on_start(self):
         """
-        Configure module.
+        App started
         """
         # set configured brightness
         try:
@@ -68,6 +71,12 @@ class Fourletterdisplay(CleepRenderer):
         except Exception:
             # drop exception when hat is not configured
             pass
+
+        # set current time asap
+        resp = self.send_command('get_time', 'parameters')
+        if not resp.error:
+            time_str = "%(hour)02d%(minute)02d" % resp.data
+            self.__display_time(time_str)
 
     def _on_stop(self):
         """
@@ -98,13 +107,13 @@ class Fourletterdisplay(CleepRenderer):
         if event['event'].endswith('time.sunrise') and self._get_config_field('nightmode'):
             brightness = self._get_config_field('brightness')
             self.logger.info('Disable night mode (set brightness to %s/15)' % brightness)
-            self.change_brightness(brightness)
+            self.__change_brightness(brightness)
             self.is_night_mode = True
 
         if event['event'].endswith('time.sunset') and self._get_config_field('nightmode'):
             brightness = self._get_config_field('nightbrightness')
             self.logger.info('Enable night mode (restore brightness to %s/15)' % brightness)
-            self.change_brightness(brightness)
+            self.__change_brightness(brightness)
             self.is_night_mode = False
 
     def on_render(self, profile_name, profile_values):
@@ -116,8 +125,31 @@ class Fourletterdisplay(CleepRenderer):
             values (dict): profile values
         """
         if profile_name == 'MessageProfile':
-            self.display_message(profile_values['message'])
-            self.set_dots(middle_left=True)
+            self.__display_time(profile_values['message'])
+        if profile_name == 'AlarmProfile':
+            if profile_values['status'] == AlarmProfile.STATUS_SCHEDULED:
+                self.__display_indicator(True)
+            if profile_values['status'] == AlarmProfile.STATUS_STOPPED:
+                self.__display_indicator(False)
+
+    def __display_time(self, time):
+        """
+        Display time (with dot separator)
+
+        Args:
+            time (str): time to display (HHMM)
+        """
+        self.display_message(time)
+        self.set_dots(middle_left=True)
+
+    def __display_indicator(self, on):
+        """
+        Turn on/off indicator (most right LED)
+
+        Args:
+            on (bool): True to turn on indicator, False otherwise
+        """
+        self.set_dots(most_right=on)
 
     def __import_lib(self):
         """
@@ -126,12 +158,14 @@ class Fourletterdisplay(CleepRenderer):
         Raises:
             Exception if driver not installed or lib not installed or screen not connected
         """
+        if "fourletterphat" in sys.modules:
+            self.logger.debug('Module "fourletterphat" is already loaded')
         if not self.driver.is_installed():
             raise Exception('Four-letter pHAT driver is not installed')
 
         try:
             global FOUR_LETTER_PHAT
-            FOUR_LETTER_PHAT = importlib.import_module('fourletterphat')
+            FOUR_LETTER_PHAT = importlib.import_module("fourletterphat")
         except Exception as error:
             raise Exception('Four-letter pHAT does not seem connected. Please check hardware') from error
 
@@ -174,7 +208,7 @@ class Fourletterdisplay(CleepRenderer):
 
         # change brightness
         if self.is_night_mode:
-            self.change_brightness(brightness)
+            self.__change_brightness(brightness)
 
     def clear(self):
         """
@@ -186,7 +220,7 @@ class Fourletterdisplay(CleepRenderer):
 
     def display_message(self, message):
         """
-        Display specified message
+        Display specified message (only 4 chars displayed)
 
         Args:
             message (string): message to display
@@ -196,7 +230,8 @@ class Fourletterdisplay(CleepRenderer):
         ])
 
         self.__import_lib()
-        FOUR_LETTER_PHAT.scroll_print(message)
+        FOUR_LETTER_PHAT.print_str(message)
+        FOUR_LETTER_PHAT.show()
 
     def set_brightness(self, brightness):
         """
@@ -220,9 +255,9 @@ class Fourletterdisplay(CleepRenderer):
 
         # change brightness
         if not self.is_night_mode:
-            self.change_brightness(brightness)
+            self.__change_brightness(brightness)
 
-    def change_brightness(self, brightness):
+    def __change_brightness(self, brightness):
         """
         Change brightness
         """
@@ -232,14 +267,28 @@ class Fourletterdisplay(CleepRenderer):
         # store current brightness to be able to restore it after restart
         self._set_config_field('currentbrightness', brightness)
 
-    def set_dots(self, most_left=False, middle_left=False, middle_right=False, most_right=False):
+    def set_dots(self, most_left=None, middle_left=None, middle_right=None, most_right=None):
         """
         Turn on/off specified dots
-        """
-        self.__import_lib()
-        FOUR_LETTER_PHAT.set_decimal(0, most_left)
-        FOUR_LETTER_PHAT.set_decimal(1, middle_left)
-        FOUR_LETTER_PHAT.set_decimal(2, middle_right)
-        FOUR_LETTER_PHAT.set_decimal(3, most_right)
-        FOUR_LETTER_PHAT.show()
 
+        Args:
+            most_left (bool): True to turn on, False to turn off, None to let current state
+            middle_left (bool): True to turn on, False to turn off, None to let current state
+            middle_right (bool): True to turn on, False to turn off, None to let current state
+            most_right (bool): True to turn on, False to turn off, None to let current state
+        """
+        self.logger.debug('set dots: [%s][%s][%s][%s]', most_left, middle_left, middle_right, most_right)
+        self.__import_lib()
+        if most_left != None:
+            self.__enabled_dots[0] = most_left
+        if middle_left != None:
+            self.__enabled_dots[1] = middle_left
+        if middle_right != None:
+            self.__enabled_dots[2] = middle_right
+        if most_right != None:
+            self.__enabled_dots[3] = most_right
+
+        for led, value in enumerate(self.__enabled_dots):
+            FOUR_LETTER_PHAT.set_decimal(led, value)
+
+        FOUR_LETTER_PHAT.show()

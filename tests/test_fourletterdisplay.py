@@ -9,6 +9,7 @@ from backend.fourletterdisplay import Fourletterdisplay
 from backend.fourLetterPHatDriver import FourLetterPHatDriver
 from cleep.exception import InvalidParameter, MissingParameter, CommandError, Unauthorized
 from cleep.libs.tests import session, lib
+from cleep.profiles.alarmprofile import AlarmProfile
 from mock import Mock, patch, call
 
 mock_importlib = Mock()
@@ -30,6 +31,8 @@ class TestsFourletterdisplay(unittest.TestCase):
 
     def init_session(self, start=True):
         self.module = self.session.setup(Fourletterdisplay)
+        get_time_command = self.session.make_mock_command('get_time', {'hour': 12, 'minute': 12}, False, False)
+        self.session.add_mock_command(get_time_command)
 
         if start:
             self.session.start_module(self.module)
@@ -87,7 +90,7 @@ class TestsFourletterdisplay(unittest.TestCase):
             'event': 'test.time.sunrise',
         })
 
-        self.module.change_brightness.assert_called_with(brightness)
+        mock_lib.set_brightness.assert_called_with(brightness)
 
     def test_on_event_sunrise_nightmode_disabled(self):
         self.init_session()
@@ -107,13 +110,12 @@ class TestsFourletterdisplay(unittest.TestCase):
         nightmode = True
         nightbrightness = 0
         self.module._get_config_field = Mock(side_effect=[nightmode, nightbrightness])
-        self.module.change_brightness = Mock()
 
         self.module.on_event({
             'event': 'test.time.sunset',
         })
 
-        self.module.change_brightness.assert_called_with(nightbrightness)
+        mock_lib.set_brightness.assert_called_with(nightbrightness)
 
     def test_on_event_sunset_nightmode_disabled(self):
         self.init_session()
@@ -128,7 +130,7 @@ class TestsFourletterdisplay(unittest.TestCase):
 
         self.assertFalse(self.module.change_brightness.called)
 
-    def test_on_render(self):
+    def test_on_render_message_profile(self):
         self.init_session()
         self.module.display_message = Mock()
         self.module.set_dots = Mock()
@@ -138,6 +140,26 @@ class TestsFourletterdisplay(unittest.TestCase):
 
         self.module.display_message.assert_called_with(message)
         self.module.set_dots.assert_called_with(middle_left=True)
+
+    def test_on_render_alarm_profile_scheduled(self):
+        self.init_session()
+        self.module.display_message = Mock()
+        self.module.set_dots = Mock()
+        message = 'Hello'
+
+        self.module.on_render('AlarmProfile', {'status': AlarmProfile.STATUS_SCHEDULED})
+
+        self.module.set_dots.assert_called_with(most_right=True)
+
+    def test_on_render_alarm_profile_stopped(self):
+        self.init_session()
+        self.module.display_message = Mock()
+        self.module.set_dots = Mock()
+        message = 'Hello'
+
+        self.module.on_render('AlarmProfile', {'status': AlarmProfile.STATUS_STOPPED})
+
+        self.module.set_dots.assert_called_with(most_right=False)
 
     def test_on_render_unsupported_profile(self):
         self.init_session()
@@ -295,7 +317,7 @@ class TestsFourletterdisplay(unittest.TestCase):
 
         self.module.display_message('helo')
 
-        mock_lib.scroll_print.assert_called_with('helo')
+        mock_lib.print_str.assert_called_with('helo')
 
     def test_set_brightness_during_day(self):
         self.init_session()
