@@ -4,6 +4,7 @@ import unittest
 import logging
 import sys
 import time
+from datetime import datetime
 sys.path.append('../')
 from backend.fourletterdisplay import Fourletterdisplay
 from backend.fourLetterPHatDriver import FourLetterPHatDriver
@@ -41,24 +42,17 @@ class TestsFourletterdisplay(unittest.TestCase):
         self.module.driver = Mock()
         self.module.driver.is_installed.return_value = True
 
-    def test_configure(self):
-        self.init_session(False)
-        self.module.set_brightness = Mock()
-        self.module._get_config_field = Mock(return_value=10)
+    @patch('backend.fourletterdisplay.datetime')
+    def test_on_start(self, mock_datetime):
+        mock_datetime.now.return_value = datetime(2022, 12, 18, 7, 6, 22, 0)
+        self.init_session()
+        self.module._get_config_field = Mock()
 
-        self.session.start_module(self.module)
+        self.module._on_start()
 
-        self.module.set_brightness.assert_called_with(10)
-        self.module._get_config_field.assert_called_with('currentbrightness')
-
-    def test_configure_exception(self):
-        self.init_session(False)
-        self.module.set_brightness = Mock(side_effect=Exception('Test exception'))
-
-        try:
-            self.session.start_module(self.module)
-        except:
-            self.fail('Should not raise exception during _configure call')
+        self.module._get_config_field.assert_any_call('currentbrightness')
+        mock_lib.print_str.assert_called_with('0706')
+        mock_lib.set_decimal.assert_any_call(1, True)
 
     def test_on_stop(self):
         self.init_session()
@@ -147,19 +141,29 @@ class TestsFourletterdisplay(unittest.TestCase):
         self.module.set_dots = Mock()
         message = 'Hello'
 
-        self.module.on_render('AlarmProfile', {'status': AlarmProfile.STATUS_SCHEDULED})
+        self.module.on_render('AlarmProfile', {'status': AlarmProfile.STATUS_SCHEDULED, 'count': 1})
 
         self.module.set_dots.assert_called_with(most_right=True)
 
-    def test_on_render_alarm_profile_stopped(self):
+    def test_on_render_alarm_profile_unscheduled_without_other_alarm_sheduled(self):
         self.init_session()
         self.module.display_message = Mock()
         self.module.set_dots = Mock()
         message = 'Hello'
 
-        self.module.on_render('AlarmProfile', {'status': AlarmProfile.STATUS_STOPPED})
+        self.module.on_render('AlarmProfile', {'status': AlarmProfile.STATUS_UNSCHEDULED, 'count': 0})
 
         self.module.set_dots.assert_called_with(most_right=False)
+
+    def test_on_render_alarm_profile_unscheduled_with_other_alarm_scheduled(self):
+        self.init_session()
+        self.module.display_message = Mock()
+        self.module.set_dots = Mock()
+        message = 'Hello'
+
+        self.module.on_render('AlarmProfile', {'status': AlarmProfile.STATUS_UNSCHEDULED, 'count': 1})
+
+        self.module.set_dots.assert_called_with(most_right=True)
 
     def test_on_render_unsupported_profile(self):
         self.init_session()
@@ -205,7 +209,7 @@ class TestsFourletterdisplay(unittest.TestCase):
         mock_importlib.import_module.side_effect = None
         mock_importlib.import_module.return_value = mock_lib
 
-    def test_enable_night_mode_enable_during_day(self):
+    def test_enable_night_mode_enabled_during_day(self):
         self.init_session()
         self.module._set_config_field = Mock()
         self.module._get_config_field = Mock(return_value=6)
@@ -214,11 +218,12 @@ class TestsFourletterdisplay(unittest.TestCase):
 
         self.module.enable_night_mode(True)
 
-        self.module._set_config_field.assert_called_with('nightmode', True)
+        self.module._set_config_field.assert_any_call('nightmode', True)
+        self.module._set_config_field.assert_any_call('currentbrightness', 6)
         self.module._get_config_field.assert_called_with('brightness')
-        self.module.set_brightness.assert_called_with(6)
+        mock_lib.set_brightness.assert_called_with(6)
 
-    def test_enable_night_mode_enable_during_night(self):
+    def test_enable_night_mode_enabled_during_night(self):
         self.init_session()
         self.module._set_config_field = Mock()
         self.module._get_config_field = Mock(return_value=6)
@@ -227,11 +232,12 @@ class TestsFourletterdisplay(unittest.TestCase):
 
         self.module.enable_night_mode(True)
 
-        self.module._set_config_field.assert_called_with('nightmode', True)
-        self.module._get_config_field.assert_called_with('nightbrightness')
-        self.module.set_brightness.assert_called_with(6)
+        self.module._set_config_field.assert_any_call('nightmode', True)
+        self.module._set_config_field.assert_any_call('currentbrightness', 6)
+        self.module._get_config_field.assert_any_call('nightbrightness')
+        mock_lib.set_brightness.assert_called_with(6)
 
-    def test_enable_night_mode_disable_during_day(self):
+    def test_enable_night_mode_disabled_during_day(self):
         self.init_session()
         self.module._set_config_field = Mock()
         self.module._get_config_field = Mock(return_value=6)
@@ -240,11 +246,12 @@ class TestsFourletterdisplay(unittest.TestCase):
 
         self.module.enable_night_mode(False)
 
-        self.module._set_config_field.assert_called_with('nightmode', False)
+        self.module._set_config_field.assert_any_call('nightmode', False)
+        self.module._set_config_field.assert_any_call('currentbrightness', 6)
         self.module._get_config_field.assert_called_with('brightness')
-        self.module.set_brightness.assert_called_with(6)
+        mock_lib.set_brightness.assert_called_with(6)
 
-    def test_enable_night_mode_disable_during_night(self):
+    def test_enable_night_mode_disabled_during_night(self):
         self.init_session()
         self.module._set_config_field = Mock()
         self.module._get_config_field = Mock(return_value=6)
@@ -253,9 +260,10 @@ class TestsFourletterdisplay(unittest.TestCase):
 
         self.module.enable_night_mode(False)
 
-        self.module._set_config_field.assert_called_with('nightmode', False)
+        self.module._set_config_field.assert_any_call('nightmode', False)
+        self.module._set_config_field.assert_any_call('currentbrightness', 6)
         self.module._get_config_field.assert_called_with('brightness')
-        self.module.set_brightness.assert_called_with(6)
+        mock_lib.set_brightness.assert_called_with(6)
 
     def test_enable_night_mode_invalid_params(self):
         self.init_session()

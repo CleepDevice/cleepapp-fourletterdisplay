@@ -3,13 +3,14 @@
 
 import importlib
 import sys
+from datetime import datetime
 from cleep.core import CleepRenderer
 from cleep.common import CATEGORIES
 from cleep.profiles.messageprofile import MessageProfile
 from cleep.profiles.alarmprofile import AlarmProfile
 from .fourLetterPHatDriver import FourLetterPHatDriver
 
-# use for global lib import
+# used for global lib import
 FOUR_LETTER_PHAT = None
 
 class Fourletterdisplay(CleepRenderer):
@@ -65,22 +66,20 @@ class Fourletterdisplay(CleepRenderer):
         """
         App started
         """
-        # set configured brightness
         try:
-            self.set_brightness(self._get_config_field('currentbrightness'))
+            self.__change_brightness(self._get_config_field('currentbrightness'))
         except Exception:
             # drop exception when hat is not configured
             pass
 
         # set current time asap
-        resp = self.send_command('get_time', 'parameters')
-        if not resp.error:
-            time_str = "%(hour)02d%(minute)02d" % resp.data
-            self.__display_time(time_str)
+        now = datetime.now()
+        time_str = f"{now.hour:02}{now.minute:02}"
+        self.__display_time(time_str)
 
     def _on_stop(self):
         """
-        Stop module
+        Stop app
         """
         try:
             self.clear()
@@ -92,7 +91,7 @@ class Fourletterdisplay(CleepRenderer):
         """
         Event received
 
-        Params:
+        Args:
             event (dict): MessageRequest as dict with event values::
 
                 {
@@ -122,15 +121,13 @@ class Fourletterdisplay(CleepRenderer):
 
         Args:
             profile_name (str): rendered profile name
-            values (dict): profile values
+            profile_values (dict): profile values
         """
         if profile_name == 'MessageProfile':
             self.__display_time(profile_values['message'])
         if profile_name == 'AlarmProfile':
-            if profile_values['status'] == AlarmProfile.STATUS_SCHEDULED:
-                self.__display_indicator(True)
-            if profile_values['status'] == AlarmProfile.STATUS_STOPPED:
-                self.__display_indicator(False)
+            if profile_values['status'] in (AlarmProfile.STATUS_SCHEDULED, AlarmProfile.STATUS_UNSCHEDULED):
+                self.__display_indicator(profile_values['count'] != 0)
 
     def __display_time(self, time):
         """
@@ -182,16 +179,16 @@ class Fourletterdisplay(CleepRenderer):
 
         self._set_config_field('nightmode', enable)
 
-        # restore configured brightness
         if enable and self.is_night_mode:
-            self.set_brightness(self._get_config_field('nightbrightness'))
+            self.__change_brightness(self._get_config_field('nightbrightness'))
         else:
-            self.set_brightness(self._get_config_field('brightness'))
+            self.__change_brightness(self._get_config_field('brightness'))
 
     def set_night_mode_brightness(self, brightness):
         """
         Set nightmode brightness
 
+        Args:
             brightness (int): brighness value (0..15)
         """
         self._check_parameters([
@@ -260,6 +257,9 @@ class Fourletterdisplay(CleepRenderer):
     def __change_brightness(self, brightness):
         """
         Change brightness
+
+        Args:
+            brightness (int): brighness value (0..15)
         """
         self.__import_lib()
         FOUR_LETTER_PHAT.set_brightness(brightness)
