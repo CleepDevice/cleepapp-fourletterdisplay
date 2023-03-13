@@ -1,6 +1,6 @@
 # Changelog
 
-## [UNRELEASED]
+## [1.1.0] - 2023-03-13
 ### Changed
 * Update on_render parameter names according to core
 * Do not display scrolling text. Limit text to 4 chars
