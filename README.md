@@ -1,8 +1,8 @@
-# Fourletterdisplay [![Coverage Status](https://coveralls.io/repos/github/tangb/cleepapp-fourletterdisplay/badge.svg?branch=master)](https://coveralls.io/github/tangb/cleepapp-fourletterdisplay?branch=master)
+# Fourletterdisplay [![Coverage Status](https://coveralls.io/repos/github/CleepDevice/cleepapp-fourletterdisplay/badge.svg)](https://coveralls.io/github/CleepDevice/cleepapp-fourletterdisplay)
 
 Four-letter pHAT Cleep driver for [Piromoni hardware](https://shop.pimoroni.com/products/four-letter-phat).
 
-![alt text](https://github.com/tangb/cleepmod-fourletterdisplay/blob/master/resources/phat.jpg?raw=true "Piromoni Four-letter pHAT")
+![alt text](https://github.com/CleepDevice/cleepmod-fourletterdisplay/blob/master/resources/phat.jpg?raw=true "Piromoni Four-letter pHAT")
 
 Install python library and render basic events (time). It also implements functions to display text on segments.
 
