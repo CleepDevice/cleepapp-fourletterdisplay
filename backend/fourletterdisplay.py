@@ -289,10 +289,10 @@ class Fourletterdisplay(CleepRenderer):
         Turn on/off specified dots
 
         Args:
-            most_left (bool): True to turn on, False to turn off, None to let current state
-            middle_left (bool): True to turn on, False to turn off, None to let current state
-            middle_right (bool): True to turn on, False to turn off, None to let current state
-            most_right (bool): True to turn on, False to turn off, None to let current state
+            most_left (bool, optional): True to turn on, False to turn off, None to let current state. Defaults to None.
+            middle_left (bool, optional): True to turn on, False to turn off, None to let current state. Defaults to None.
+            middle_right (bool, optional): True to turn on, False to turn off, None to let current state. Defaults to None.
+            most_right (bool, optional): True to turn on, False to turn off, None to let current state. Defaults to None.
         """
         self.logger.debug(
             "set dots: [%s][%s][%s][%s]",
