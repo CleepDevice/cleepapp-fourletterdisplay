@@ -1,93 +1,35 @@
-<div layout="column" ng-cloak class="module-padding">
+<div layout="column" layout-padding ng-cloak>
 
-    <md-list ng-cloak>
+    <config-section cl-title="General configuration" cl-icon="cog"></config-section>
+    <config-slider
+        cl-title="Default brightness" cl-model="$ctrl.config.brightness"
+        cl-on-change="$ctrl.setBrightness(value)" cl-min="0" cl-max="15"
+    ></config-slider>
 
-        <md-subheader class="md-no-sticky">General configuration</md-subheader>
-        <md-list-item>
-            <md-icon md-svg-icon="chevron-right"></md-icon>
-            <p>Default brightness</p>
-            <div class="md-secondary">
-                <md-slider
-                    ng-model="fourletterdisplayCtl.config.brightness"
-                    ng-model-options="{debounce: 1000}"
-                    ng-change="fourletterdisplayCtl.setBrightness()"
-                    min="0"
-                    max="15"
-                    aria-label="Default brightness"
-                    md-discrete
-                >
-                </md-slider>
-            </div>
-        </md-list-item>
-
-        <md-subheader class="md-no-sticky">Night mode</md-subheader>
-        <md-list-item class="md-2-line">
-            <md-icon md-svg-icon="chevron-right"></md-icon>
-            <div class="md-list-item-text">
-                <h3>Disable/enable night mode</h3>
-                <p>Night mode will change brightness at sunset and restore default one at sunrise</p>
-            </div>
-            <md-checkbox
-                class="md-secondary"
-                ng-model="fourletterdisplayCtl.config.nightmode"
-                ng-change="fourletterdisplayCtl.enableNightMode()"
-                aria-label="Night mode"
-            ></md-checkbox>
-        </md-list-item>
-        <md-list-item>
-            <md-icon md-svg-icon="chevron-right"></md-icon>
-            <p>Night brightness</p>
-            <div class="md-secondary">
-                <md-slider
-                    ng-model="fourletterdisplayCtl.config.nightbrightness"
-                    ng-model-options="{debounce: 1000}"
-                    ng-change="fourletterdisplayCtl.setNightModeBrightness()"
-                    min="0"
-                    max="15"
-                    aria-label="Night brightness"
-                    md-discrete
-                >
-                </md-slider>
-            </div>
-        </md-list-item>
-
-        <md-subheader class="md-no-sticky">Test</md-subheader>
-        <md-list-item>
-            <md-icon md-svg-icon="chevron-right"></md-icon>
-            <p>Display message</p>
-            <md-input-container md-no-float class="md-secondary no-margin" layout="row" layout-align="start center" layout-padding>
-                <div class="no-md-error">
-                    <input ng-model="fourletterdisplayCtl.message" placeholder="message" aria-label="Message" class="no-margin">
-                </div>
-                <md-button ng-click="fourletterdisplayCtl.displayMessage()" class="md-raised md-primary">
-                    <md-icon md-svg-icon="pencil"></md-icon>
-                </md-button>
-            </md-input-container>
-        </md-list-item>
-        <md-list-item>
-            <md-icon md-svg-icon="chevron-right"></md-icon>
-            <p>Turn on/off dots</p>
-            <md-input-container md-no-float class="md-secondary no-margin" layout="row" layout-align="start center" layout-padding>
-                <div>
-                    <md-checkbox ng-model="fourletterdisplayCtl.dots[0]"></md-checkbox>
-                    <md-checkbox ng-model="fourletterdisplayCtl.dots[1]"></md-checkbox>
-                    <md-checkbox ng-model="fourletterdisplayCtl.dots[2]"></md-checkbox>
-                    <md-checkbox ng-model="fourletterdisplayCtl.dots[3]"></md-checkbox>
-                </div>
-                <md-button ng-click="fourletterdisplayCtl.setDots()" class="md-raised md-primary">
-                    <md-icon md-svg-icon="pencil"></md-icon>
-                </md-button>
-            </md-input-container>
-        </md-list-item>
-        <md-list-item>
-            <md-icon md-svg-icon="chevron-right"></md-icon>
-            <p>Clear display</p>
-            <md-button class="md-secondary md-raised md-primary" ng-click="fourletterdisplayCtl.clear()">
-                Clear
-            </md-button>
-        </md-list-item>
-
-    </md-list>
+    <config-section cl-title="Night mode" cl-icon="weather-night"></config-section>
+    <config-checkbox
+        cl-title="Disable/enable night mode" cl-subtitle="Night mode will change brightness at sunset and restore default one at sunrise"
+        cl-model="$ctrl.config.nightmode" cl-click="$ctrl.enableNightMode(value)"
+    ></config-checkbox>
+    <config-slider
+        cl-title="Night brightness" cl-model="$ctrl.config.nightbrightness"
+        cl-on-change="$ctrl.setNightModeBrightness(value)" cl-min="0" cl-max="15"
+    ></config-slider>
+        
+    <config-section cl-title="Test" cl-icon="test-tube"></config-section>
+    <config-text
+        cl-title="Display message" cl-btn-icon="check"
+        cl-model="$ctrl.message" cl-click="$ctrl.displayMessage(value)"
+    ></config-text>
+    <config-select
+        cl-title="Turn on/off dots" cl-btn-icon="check"
+        cl-model="$ctrl.selectedDots"
+        cl-options="$ctrl.dotsOptions" cl-click="$ctrl.setDots(value)"
+    ></config-select>
+    <config-button
+        cl-title="Clear display" cl-btn-icon="eraser"
+        cl-click="$ctrl.clearDisplay()"
+    ></config-button>
 
 </div>
     
