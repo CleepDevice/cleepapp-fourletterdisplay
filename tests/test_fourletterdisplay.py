@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from cleep.libs.tests import session, lib
 import unittest
 import logging
 import sys
@@ -15,9 +16,11 @@ from cleep.exception import (
     CommandError,
     Unauthorized,
 )
-from cleep.libs.tests import session, lib
 from cleep.profiles.alarmprofile import AlarmProfile
-from mock import Mock, patch, call
+from unittest.mock import Mock, patch, call
+from cleep.libs.tests.common import get_log_level
+
+LOG_LEVEL = get_log_level()
 
 mock_importlib = Mock()
 mock_lib = Mock()
@@ -30,7 +33,7 @@ class TestsFourletterdisplay(unittest.TestCase):
     def setUp(self):
         self.session = session.TestSession(self)
         logging.basicConfig(
-            level=logging.FATAL,
+            level=LOG_LEVEL,
             format=u"%(asctime)s %(name)s:%(lineno)d %(levelname)s : %(message)s",
         )
 
@@ -39,8 +42,8 @@ class TestsFourletterdisplay(unittest.TestCase):
         mock_lib.reset_mock()
         mock_importlib.reset_mock()
 
-    def init_session(self, start=True):
-        self.module = self.session.setup(Fourletterdisplay)
+    def init_session(self, start=True, mock_on_start=True, mock_on_stop=True):
+        self.module = self.session.setup(Fourletterdisplay, mock_on_start=mock_on_start, mock_on_stop=mock_on_stop)
         get_time_command = self.session.make_mock_command(
             "get_time", {"hour": 12, "minute": 12}, False, False
         )
@@ -56,7 +59,7 @@ class TestsFourletterdisplay(unittest.TestCase):
     @patch("backend.fourletterdisplay.datetime")
     def test_on_start(self, mock_datetime):
         mock_datetime.now.return_value = datetime(2022, 12, 18, 7, 6, 22, 0)
-        self.init_session()
+        self.init_session(mock_on_start=False)
         self.module._get_config_field = Mock()
 
         self.module._on_start()
@@ -66,7 +69,7 @@ class TestsFourletterdisplay(unittest.TestCase):
         mock_lib.set_decimal.assert_any_call(1, True)
 
     def test_on_stop(self):
-        self.init_session()
+        self.init_session(mock_on_stop=False)
         self.module.clear = Mock()
 
         self.module.stop()
@@ -202,7 +205,7 @@ class TestsFourletterdisplay(unittest.TestCase):
         self.assertFalse(self.module.set_dots.called)
 
     def test_import_lib(self):
-        self.init_session(False)
+        self.init_session(False, mock_on_start=False)
         self.module.driver = Mock()
         self.module.driver.is_installed.return_value = True
 
@@ -414,7 +417,7 @@ class TestsFourLetterPHatDriver(unittest.TestCase):
     def setUp(self):
         self.lib = lib.TestLib()
         logging.basicConfig(
-            level=logging.FATAL,
+            level=LOG_LEVEL,
             format=u"%(asctime)s %(name)s:%(lineno)d %(levelname)s : %(message)s",
         )
 
