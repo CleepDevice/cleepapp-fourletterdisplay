@@ -20,7 +20,7 @@ class Fourletterdisplay(CleepRenderer):
     """
 
     MODULE_AUTHOR = "Cleep"
-    MODULE_VERSION = "1.1.0"
+    MODULE_VERSION = "1.2.0"
     MODULE_DEPS = []
     MODULE_DESCRIPTION = "Four-letter pHAT display"
     MODULE_LONGDESCRIPTION = (
